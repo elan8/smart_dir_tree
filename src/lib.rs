@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 use std::fs::read_dir;
 use std::hash::{DefaultHasher, Hash, Hasher};
@@ -6,12 +6,12 @@ use std::io::{Error, ErrorKind, Result};
 use std::path::{Path, PathBuf};
 use std::vec;
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize,Debug, Clone)]
 pub struct Tree {
     pub root_node: TreeNode,
 }
 
-#[derive(Serialize, PartialEq, Eq, Debug, Clone)]
+#[derive(Serialize, Deserialize,PartialEq, Eq, Debug, Clone)]
 pub struct TreeNode {
     pub id: u64,
     pub file_name: String,
@@ -138,7 +138,7 @@ fn path_to_node<'a>(path: PathBuf) -> Result<TreeNode> {
     let path_string = path.to_string_lossy().to_string();
     let mut node = TreeNode::new();
     node.id = calculate_path_hash(&path);
-    node.file_name = path.file_name().unwrap().to_string_lossy().to_string();
+    node.file_name = path.file_name().unwrap_or_default().to_string_lossy().to_string();
     node.path = path_string;
     Ok(node)
 }
